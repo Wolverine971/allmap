@@ -1,0 +1,19 @@
+{
+  "hash": "ab5452db",
+  "browserHash": "85d0ded9",
+  "optimized": {
+    "vue": {
+      "src": "../../node_modules/vue/dist/vue.runtime.esm-bundler.js",
+      "file": "vue.js",
+      "fileHash": "65cdf25f",
+      "needsInterop": false
+    },
+    "ufo": {
+      "src": "../../node_modules/ufo/dist/index.mjs",
+      "file": "ufo.js",
+      "fileHash": "558e7dd3",
+      "needsInterop": false
+    }
+  },
+  "chunks": {}
+}
