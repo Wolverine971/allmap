@@ -79,24 +79,24 @@ import { ref, reactive } from "vue";
 import { storeToRefs } from "pinia";
 import { getCongressionalDistrict, getTigerState } from "../api/geos";
 // import L from 'leaflet'
-import {
-  LMap,
-  LGeoJson,
-  LIcon,
-  LTileLayer,
-  LMarker,
-  LControlLayers,
-  LControl,
-  LTooltip,
-  LPopup,
-  LPolyline,
-  LPolygon,
-  LRectangle,
-} from "@vue-leaflet/vue-leaflet";
+// import {
+//   LMap,
+//   LGeoJson,
+//   LIcon,
+//   LTileLayer,
+//   LMarker,
+//   LControlLayers,
+//   LControl,
+//   LTooltip,
+//   LPopup,
+//   LPolyline,
+//   LPolygon,
+//   LRectangle,
+// } from "@vue-leaflet/vue-leaflet";
 import "leaflet/dist/leaflet.css";
 import { IFeatureCollection } from "~~/api/feature";
 import L from "leaflet";
-
+const config = useRuntimeConfig();
 let map: any = ref(null);
 const store = useMyStore();
 // dont destructor
@@ -188,7 +188,6 @@ const getGetDistrict = async () => {
   console.log(polygon);
 };
 
-const config = useRuntimeConfig();
 const filterPanelOpen = useState<boolean>("map.filterPanelOpen", () => false);
 // const map = useState<object | null>("map.map", () => null);
 const zoom = useState<number>("map.zoom", () => 2);

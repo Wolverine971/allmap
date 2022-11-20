@@ -3,18 +3,21 @@
     Add Locations
 
     <div id="app" class="container">
-      <card
+      <div>
+        <!-- <card
         data-image="https://images.unsplash.com/photo-1479660656269-197ebb83b540?dpr=2&auto=compress,format&fit=crop&w=1199&h=798&q=80&cs=tinysrgb&crop="
-      >
-        <template v-slot:header>
-          <h1 slot="header">Location</h1>
+      > -->
+        <template>
+          <h1>Location</h1>
         </template>
-        <template v-slot:content>
+        <template>
+          <!-- <template v-slot:content> -->
           <input type="text" v-model="address" />
           <button @click="verifyLocation">Verify Location</button>
           <div id="mapLocationId"></div>
         </template>
-      </card>
+        <!-- </card> -->
+      </div>
     </div>
 
     <button @click="showAddLocation = !showAddLocation">Cancel</button>
@@ -27,7 +30,7 @@ import { ref, computed } from "vue";
 import { IFilterPanel, topLvlGeos } from "~~/models";
 import FilterPanel from "./FilterPanel/filterPanel.vue";
 const emit = defineEmits(["close"]);
-
+const config = useRuntimeConfig();
 let address = ref("");
 interface Props {
   open?: string | number | boolean;

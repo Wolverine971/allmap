@@ -1,7 +1,7 @@
 <template>
-  <div>
-    <h1>Index page</h1>
-
-    <Map />
+  <div style="margin: 10px; padding: 10px">
+    <slot name="map">
+      <Map />
+    </slot>
   </div>
 </template>

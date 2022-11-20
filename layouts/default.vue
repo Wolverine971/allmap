@@ -1,23 +1,23 @@
 <template>
-    <div>
-      <slot name="app-before" />
-      <div id="app-before"></div>
-      <div class="flex flex-col min-h-screen">
-        <slot name="header">
-          <BuilderNavbar />
-        </slot>
-        <div class="flex-1 w-full flex flex-col">
-          <div
-            class="relative flex-1 flex flex-col mx-auto max-w-8xl w-full h-full"
-          >
-            <slot />
-          </div>
+  <div>
+    <slot name="app-before" />
+    <div id="app-before"></div>
+    <div class="flex flex-col min-h-screen">
+      <slot name="header">
+        <Navbar />
+      </slot>
+      <div class="flex-1 w-full flex flex-col" style="margin-top: 80px">
+        <div
+          class="relative flex-1 flex flex-col mx-auto max-w-8xl w-full h-full"
+        >
+          <slot />
         </div>
-        <!-- <slot name="footer">
+      </div>
+      <!-- <slot name="footer">
           <PageFooter />
         </slot> -->
-      </div>
-      <slot name="app-after" />
-      <div id="app-after"></div>
     </div>
-  </template>
+    <slot name="app-after" />
+    <div id="app-after"></div>
+  </div>
+</template>

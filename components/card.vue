@@ -120,7 +120,7 @@ p + p {
 
 .cardt-wrap {
   margin: 10px;
-  transform: perspective(800px);
+  transform: perspective(1000px);
   transform-style: preserve-3d;
   cursor: pointer;
   // background-color: #fff;

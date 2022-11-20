@@ -1,23 +1,23 @@
 <template>
-  <!-- <div class="cardd">Magic cardd</div> -->
-  <dialog class="" ref="dialog">
+  <!-- <div class="cardd">Magic card</div> -->
+  <dialog class="" ref="dialog" style="min-width: 20%">
     <div class="">
       <h1>
         Filter Panels
         <span @click="addLocation" class="addIcon"><IconMdi:plus /></span>
       </h1>
       <div v-if="!showAddLocation">
-        <div v-for="(panel, i) in panels" :key="i">
-          <FilterPanel :panel="panel" :panelType="panel.type" />
+        <div v-for="(panel, i) in panels" :key="i" class="mdl-button">
+          <slot name="filterPanel">
+            <FilterPanel :panel="panel" :panelType="panel.type" />
+          </slot>
         </div>
       </div>
       <div v-else>
         <AddLocation />
-        
-
       </div>
     </div>
-    <div class="">
+    <div style="display: flex">
       <button type="button" class="mdl-button" @click="closeClickHandler">
         Close
       </button>
@@ -35,7 +35,7 @@ interface Props {
   open?: string | number | boolean;
 }
 const dialog = ref(null);
-let showAddLocation = ref(false)
+let showAddLocation = ref(false);
 // micro compiler
 const props = defineProps({
   open: {
@@ -88,15 +88,20 @@ const showClickHandler = (event) => {
 };
 
 const addLocation = () => {
-    showAddLocation.value = true
+  showAddLocation.value = true;
 };
 const saveAddLocation = () => {
-    showAddLocation.value = false
-    censusGeoCode
+  showAddLocation.value = false;
+  console.log(censusGeoCode);
 };
-const verifyLocation =()=>{
-    censusGeoCode
-}
+
+const save = () => {
+  console.log("save");
+};
+
+const verifyLocation = () => {
+  console.log(censusGeoCode);
+};
 </script>
 
 <style lang="scss">
@@ -107,5 +112,14 @@ const verifyLocation =()=>{
   background-color: grey;
   border-radius: 2px;
 }
-
+.mdl-button {
+  background: #ebe7e7;
+  border-radius: 5px;
+  margin: 5px;
+  padding: 5px;
+  text-align: center;
+  &:hover {
+    background: #cfcbcb;
+  }
+}
 </style>

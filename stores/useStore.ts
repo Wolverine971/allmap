@@ -10,7 +10,7 @@ export const useMyStore = defineStore({
   id: "my-store",
   state: () => {
     return {
-      center: [-69.388049291, 13.271484375],
+      center: [38.388049291, -97.271484375],
       currentLocation: null as [number, number] | null,
 
       filterPanelSelections: [] as IFilterPanelSelection[],

@@ -132,4 +132,7 @@ export default defineNuxtConfig({
   publicRuntimeConfig: {
     accessToken: process.env.accessToken,
   },
+  runtimeConfig: {
+    accessToken: process.env.accessToken,
+  },
 });

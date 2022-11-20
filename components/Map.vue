@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="card">
     <h1>Map</h1>
     <div class="mapDiv">
       <div id="mapid">
@@ -19,10 +19,14 @@
       >
         Filter Panel
       </button>
+    </div>
+    <div>
       <input type="text" v-model="geo" />
       <button @click="getGetState">Get State</button>
     </div>
-    <Dialog :open="filterPanelOpen" @close="filterPanelOpen = false" />
+    <slot name="dialog">
+      <Dialog :open="filterPanelOpen" @close="filterPanelOpen = false" />
+    </slot>
   </div>
 </template>
 
@@ -32,29 +36,39 @@ import { useMyStore } from "../stores/useStore";
 import { ref, reactive } from "vue";
 import { storeToRefs } from "pinia";
 import { getCongressionalDistrict, getTigerState } from "../api/geos";
-// import L from 'leaflet'
-import {
-  LMap,
-  LGeoJson,
-  LIcon,
-  LTileLayer,
-  LMarker,
-  LControlLayers,
-  LControl,
-  LTooltip,
-  LPopup,
-  LPolyline,
-  LPolygon,
-  LRectangle,
-} from "@vue-leaflet/vue-leaflet";
 import "leaflet/dist/leaflet.css";
 import { IFeatureCollection } from "~~/api/feature";
+const config = useRuntimeConfig();
+// import L from 'leaflet'
+// import {
+//   LMap,
+//   LGeoJson,
+//   LIcon,
+//   LTileLayer,
+//   LMarker,
+//   LControlLayers,
+//   LControl,
+//   LTooltip,
+//   LPopup,
+//   LPolyline,
+//   LPolygon,
+//   LRectangle,
+// } from "@vue-leaflet/vue-leaflet";
 
-let map = ref(null);
+let map = ref<any>(null);
 const store = useMyStore();
 // dont destructor
 const { center } = storeToRefs(store);
+const filterPanelOpen = useState<boolean>("map.filterPanelOpen", () => false);
+// const map = useState<object | null>("map.map", () => null);
+const zoom = useState<number>("map.zoom", () => 2);
+const iconHeight = useState<number>("map.iconHeight", () => 40);
+const iconWidth = useState<number>("map.iconWidth", () => 25);
 
+const iconUrl = `https://placekitten.com/${iconWidth.value}/${iconHeight.value}`;
+const iconSize = [iconWidth.value, iconHeight.value];
+const mapZoom = 5;
+// let zoom: 2, iconWidth: 25, iconHeight: 40;
 let geojson = ref({
   type: "FeatureCollection",
   features: [],
@@ -128,8 +142,8 @@ const renderMap = async () => {
   };
 
   map.value = L.map("mapid", {
-    center: store.getCenter,
-    zoom: 10,
+    center: store.getCenter as any,
+    zoom: 6,
     minZoom: 3,
     layers: [streets, osm, cities],
   });
@@ -141,45 +155,37 @@ const renderMap = async () => {
     .layers(baseMaps, overlayMaps) // { position: "topRight" }
     .addTo(map.value);
 };
-const getLatLong = (e) => {
+const getLatLong = (e: any) => {
   // e.preventDefault()
   // preventDefault()
   console.log(e.latlng);
 };
-const getZoom = (e) => {
+const getZoom = (e: any) => {
+  console.log(map.value.getZoom());
   store.setZoomlvl(map.value.getZoom());
   store.setCenter(map.value.getCenter());
 };
 
-const getCenter = (e) => {
+const getCenter = (e: any) => {
   store.setCenter(map.value.getCenter());
   // map.value
 };
 const getGetState = async () => {
-  const data = await getTigerState(geo.value);
+  const name = geo.value
+    ? geo.value.charAt(0).toUpperCase() + geo.value.slice(1)
+    : "";
+  const data = await getTigerState(name);
   L.geoJSON(data, {
     style: function (feature) {
       return { color: "#a591b7" };
     },
   })
-    .bindPopup(function (layer) {
+    .bindPopup(function (layer: any) {
       return layer.feature.properties.description;
     })
     .addTo(map.value);
   console.log(polygon);
 };
-
-const config = useRuntimeConfig();
-const filterPanelOpen = useState<boolean>("map.filterPanelOpen", () => false);
-// const map = useState<object | null>("map.map", () => null);
-const zoom = useState<number>("map.zoom", () => 2);
-const iconHeight = useState<number>("map.iconHeight", () => 40);
-const iconWidth = useState<number>("map.iconWidth", () => 25);
-
-const iconUrl = `https://placekitten.com/${iconWidth.value}/${iconHeight.value}`;
-const iconSize = [iconWidth.value, iconHeight.value];
-const mapZoom = 5;
-// let zoom: 2, iconWidth: 25, iconHeight: 40;
 
 const geojsonstyle = {
   weight: 2,
@@ -223,6 +229,12 @@ const openFilterPanel = () => {
 </script>
 
 <style scoped>
+.card {
+  background: white;
+  border-radius: 2px;
+  padding: 10px;
+  margin: 10px;
+}
 #filterPanelButton {
   position: absolute;
   bottom: 0;

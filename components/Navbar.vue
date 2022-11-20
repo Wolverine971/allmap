@@ -1,15 +1,12 @@
 <script lang="ts" setup>
 import { IApp } from "~/utils/app";
 
-import { useMyStore, IFilterPanelSelection } from "../../stores/useStore";
+import { useMyStore, IFilterPanelSelection } from "../stores/useStore";
 import { storeToRefs } from "pinia";
 
 import { ref, computed } from "vue";
 // state
-const app = useState<IApp>("app");
 const store = useMyStore();
-const navbar = ref(null);
-const showDrawer = useState<boolean>("navbar.showDrawer", () => false);
 const currentLocation = useState<[number, number] | null>(
   "navbar.currentLocation",
   () => null
@@ -52,7 +49,26 @@ const zoom = computed(() => {
 // };
 </script>
 <template>
-  <div class="toolbar">
+  <header>
+    <nav>
+      <ul>
+        <!-- <li>
+          <a href="#" v-for="(selection, i) in store.getSelections" :key="i">{{
+            selection.selection
+          }}</a>
+        </li> -->
+        <li>
+          <a href="#">{{
+            currentLocation ? `Current Location: ${currentLocation}` : ""
+          }}</a>
+        </li>
+        <li>
+          <a href="#">Center: {{ center }} Zoom: {{ zoom }}</a>
+        </li>
+      </ul>
+    </nav>
+  </header>
+  <!-- <div class="toolbar">
     <div>
       {{ currentLocation ? `Current Location: ${currentLocation}` : "" }}
       Center: {{ center }} Zoom: {{ zoom }}
@@ -62,7 +78,7 @@ const zoom = computed(() => {
         {{ selection.selection }}
       </button>
     </div>
-  </div>
+  </div> -->
 </template>
 
 <style lang="scss">
@@ -70,7 +86,11 @@ const zoom = computed(() => {
   width: 100%;
   display: flex;
   background: grey;
+  padding: 10px;
+  margin: 10px;
   color: white;
+  position: absolute;
+  top: 0;
 }
 
 .slide-fade-from-up-enter-active {
@@ -94,5 +114,31 @@ html.dark {
   a.router-link-exact-active {
     color: theme("colors.white");
   }
+}
+
+header {
+  background-color: white;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 80px;
+  display: flex;
+  align-items: center;
+  box-shadow: 0 0 25px 0 black;
+  z-index: 1;
+}
+
+header * {
+  display: inline;
+}
+
+header li {
+  margin: 20px;
+}
+
+header li a {
+  color: black;
+  text-decoration: none;
 }
 </style>

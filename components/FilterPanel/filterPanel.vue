@@ -19,11 +19,13 @@
     </div>
     <div v-if="showChildren" class="panel-children">
       <div v-for="(childPanel, i) in panel.children" :key="i">
-        <FilterPanel
-          :panel="childPanel"
-          :panelType="panel.type"
-          :withinId="CurrentGeoWithin.id"
-        />
+        <slot name="cfilterPanel">
+          <FilterPanel
+            :panel="childPanel"
+            :panelType="panel.type"
+            :withinId="CurrentGeoWithin.id"
+          />
+        </slot>
       </div>
     </div>
   </div>
