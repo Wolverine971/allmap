@@ -27,6 +27,7 @@
 </template>
 <script lang="ts" setup>
 import { ref } from "vue";
+import { endpoints } from "~~/api/endpoints";
 import { IFilterPanel, topLvlGeos } from "~~/models";
 import FilterPanel from "./FilterPanel/filterPanel.vue";
 const emit = defineEmits(["close"]);
@@ -44,7 +45,10 @@ const props = defineProps({
   },
 });
 
-const panels: IFilterPanel[] = [
+let dataObjects: any[] = [];
+let objectTypes: string[] = [];
+
+let panels: IFilterPanel[] = [
   {
     type: "location",
     title: "Locations",
@@ -52,32 +56,71 @@ const panels: IFilterPanel[] = [
     children: topLvlGeos,
     childrenLength: 12,
   },
-  {
-    type: "friends",
-    title: "Friends",
-    icon: "any",
-    children: [
-      { name: "mike" },
-      { name: "tiff" },
-      { name: "lily" },
-      { name: "walter" },
-      { name: "anna" },
-    ],
-    childrenLength: 12,
-  },
 ];
 
-watch(
-  () => props.open,
-  (newValue: Props["open"]) => {
-    if (newValue) {
-      // dialog.showModal()
-      dialog.value.showModal();
-    } else {
-      closeClickHandler();
-    }
+const groupBy = function (xs: any[], key: string) {
+  return xs.reduce(function (rv, x) {
+    (rv[x[key]] = rv[x[key]] || []).push(x);
+    return rv;
+  }, {});
+};
+
+const getObjects = async () => {
+  const variables = {};
+  const query = `query GetObjects {
+                getObjects {
+                  count
+                  dataObjects{
+                    id
+                    name
+                    properties
+                  }
+                }
+              }`;
+  const data = await endpoints.pingGraphql(query, variables);
+  if (data?.data?.getObjects) {
+    dataObjects = data?.data?.getObjects?.dataObjects;
+    objectTypes = [];
+    const groups = groupBy(data?.data?.getObjects?.dataObjects, "name");
+
+    Object.keys(groups).forEach((key) => {
+      const group = {
+        type: "object",
+        title: key,
+        icon: "any",
+        children: groups[key].map((e: any) => {
+          return {
+            type: "object",
+            name: e.properties["display-name"],
+            properties: e.properties,
+          };
+        }),
+
+        childrenLength: groups[key].length,
+      };
+      panels.push(group);
+    });
+
+    data?.data?.getObjects?.dataObjects.forEach((d: any) => {
+      objectTypes.push(d.name);
+    });
+  } else {
   }
-);
+};
+onMounted(async () => {
+  await getObjects();
+}),
+  watch(
+    () => props.open,
+    (newValue: Props["open"]) => {
+      if (newValue) {
+        // dialog.showModal()
+        dialog.value.showModal();
+      } else {
+        closeClickHandler();
+      }
+    }
+  );
 
 const closeClickHandler = () => {
   dialog.value.close();

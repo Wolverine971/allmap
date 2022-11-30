@@ -2,6 +2,7 @@ export interface IFilterPanel extends IGeoPanel {
   type?: string;
   title?: string;
   icon?: any;
+  properties?: any;
   children?: any[];
   childrenLength?: number;
 }

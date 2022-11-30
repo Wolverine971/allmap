@@ -38,22 +38,8 @@ import { storeToRefs } from "pinia";
 import { getCongressionalDistrict, getTigerState } from "../api/geos";
 import "leaflet/dist/leaflet.css";
 import { IFeatureCollection } from "~~/api/feature";
+// import L from "leaflet";
 const config = useRuntimeConfig();
-// import L from 'leaflet'
-// import {
-//   LMap,
-//   LGeoJson,
-//   LIcon,
-//   LTileLayer,
-//   LMarker,
-//   LControlLayers,
-//   LControl,
-//   LTooltip,
-//   LPopup,
-//   LPolyline,
-//   LPolygon,
-//   LRectangle,
-// } from "@vue-leaflet/vue-leaflet";
 
 let map = ref<any>(null);
 const store = useMyStore();

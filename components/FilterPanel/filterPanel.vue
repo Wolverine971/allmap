@@ -17,6 +17,11 @@
         </span>
       </button>
     </div>
+    <div v-if="dropDown && panel.properties" class="info">
+      <p v-for="(prop, i) in Object.keys(panel.properties)" :key="i" class="">
+        {{ prop }}: {{ panel.properties[prop] }}
+      </p>
+    </div>
     <div v-if="showChildren" class="panel-children">
       <div v-for="(childPanel, i) in panel.children" :key="i">
         <slot name="cfilterPanel">
@@ -73,6 +78,8 @@ let CurrentGeoWithin = useState<any>("filterPanel.CurrentGeoWithin", () => {
   };
 });
 let showChildren = ref(false);
+
+let dropDown = ref(false);
 const currentLocation = useState<[number, number] | null>(
   "navbar.currentLocation",
   () => null
@@ -90,6 +97,7 @@ onMounted(async () => {
 });
 
 const expandPanel = async () => {
+  console.log("expand");
   if (props.panel.type !== "selection") {
     if (
       (props.panel.type === "path" || props.panel.type === "location") &&
@@ -121,6 +129,10 @@ const expandPanel = async () => {
       }
     }
     showChildren.value = !showChildren.value;
+
+    if (props.panel.type === "object") {
+      dropDown.value = !dropDown.value;
+    }
   }
 };
 
@@ -147,5 +159,12 @@ const selected = async () => {
   margin-left: 10px;
   border-bottom: 1px solid black;
   border-left: 1px solid black;
+}
+.info {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+  margin: 0 10px;
 }
 </style>

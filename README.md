@@ -1,46 +1,20 @@
-# Nuxt 3 Minimal Starter
+# All Map
 
-Look at the [nuxt 3 documentation](https://v3.nuxtjs.org) to learn more.
+## Inspiration
+I want to be able to search for and plot on a map that I can refer to later
 
-## Setup
+### ToDo
 
-Make sure to install the dependencies:
 
-```bash
-# yarn
-yarn install
-
-# npm
-npm install
-
-# pnpm
-pnpm install --shamefully-hoist
-```
-
-## Development Server
-
-Start the development server on http://localhost:3000
-
-```bash
-npm run dev
-```
-
-## Production
-
-Build the application for production:
-
-```bash
-npm run build
-```
-
-Locally preview production build:
-
-```bash
-npm run preview
-```
-
-Checkout the [deployment documentation](https://v3.nuxtjs.org/guide/deploy/presets) for more information.
-
+- [x]  <del>Leaflet Map
+- [x]  <del>Census Geo Lookup
+- [ ] Map Popups with Geo info, links and actions such as messaging
+- [ ] Map Sidebar with sorting
+- [ ] Map Header with selections
+- [ ] Cache Map overlays
+- [ ] Swap in overlays
+- [ ] Overlay overlays
+- [ ]  Hosting- Domain- SSL
 
 
 Reference
