@@ -5,6 +5,7 @@ export interface IFilterPanelSelection {
   id: string;
   geos: string[];
   selection: string;
+  code: string;
 }
 export const useMyStore = defineStore({
   id: "my-store",

@@ -28,6 +28,7 @@
 <script lang="ts" setup>
 import { ref } from "vue";
 import { endpoints } from "~~/api/endpoints";
+import { PaginatedObjects } from "~~/graphqlTypes/generatedTypes";
 import { IFilterPanel, topLvlGeos } from "~~/models";
 import FilterPanel from "./FilterPanel/filterPanel.vue";
 const emit = defineEmits(["close"]);
@@ -35,7 +36,7 @@ const emit = defineEmits(["close"]);
 interface Props {
   open?: string | number | boolean;
 }
-const dialog = ref(null);
+const dialog: any = ref(null);
 let showAddLocation = ref(false);
 // micro compiler
 const props = defineProps({
@@ -45,13 +46,14 @@ const props = defineProps({
   },
 });
 
-let dataObjects: any[] = [];
+let dataObjects: PaginatedObjects[] = [];
 let objectTypes: string[] = [];
+let censusGeoCode: any = null;
 
 let panels: IFilterPanel[] = [
   {
     type: "location",
-    title: "Locations",
+    title: "Census Locations",
     icon: "any",
     children: topLvlGeos,
     childrenLength: 12,
@@ -63,6 +65,23 @@ const groupBy = function (xs: any[], key: string) {
     (rv[x[key]] = rv[x[key]] || []).push(x);
     return rv;
   }, {});
+};
+
+const getObjectTypes = async () => {
+  const variables = {};
+  const query = `query GetObjectsTypes {
+                __type(name: "ClassTypeList") {
+                  name
+                  enumValues{
+                    name
+                  }
+                }
+              }`;
+  const resp: { data: any; errors: any } = await endpoints.pingGraphql(
+    query,
+    variables
+  );
+  console.log(resp);
 };
 
 const getObjects = async () => {
@@ -77,11 +96,14 @@ const getObjects = async () => {
                   }
                 }
               }`;
-  const data = await endpoints.pingGraphql(query, variables);
-  if (data?.data?.getObjects) {
-    dataObjects = data?.data?.getObjects?.dataObjects;
+  const resp: { data: any; errors: any } = await endpoints.pingGraphql(
+    query,
+    variables
+  );
+  if (resp?.data?.getObjects) {
+    dataObjects = resp?.data?.getObjects?.dataObjects;
     objectTypes = [];
-    const groups = groupBy(data?.data?.getObjects?.dataObjects, "name");
+    const groups = groupBy(resp?.data?.getObjects?.dataObjects, "name");
 
     Object.keys(groups).forEach((key) => {
       const group = {
@@ -91,7 +113,9 @@ const getObjects = async () => {
         children: groups[key].map((e: any) => {
           return {
             type: "object",
-            name: e.properties["display-name"],
+            name: e.properties["display-name"]
+              ? e.properties["display-name"]
+              : e.properties["name"],
             properties: e.properties,
           };
         }),
@@ -101,32 +125,36 @@ const getObjects = async () => {
       panels.push(group);
     });
 
-    data?.data?.getObjects?.dataObjects.forEach((d: any) => {
-      objectTypes.push(d.name);
-    });
+    // data?.data?.getObjects?.dataObjects.forEach((d: any) => {
+    //   objectTypes.push(d.name);
+    // });
   } else {
   }
 };
 onMounted(async () => {
   await getObjects();
-}),
-  watch(
-    () => props.open,
-    (newValue: Props["open"]) => {
-      if (newValue) {
-        // dialog.showModal()
+  await getObjectTypes();
+});
+watch(
+  () => props.open,
+  (newValue: Props["open"]) => {
+    if (newValue) {
+      // dialog.showModal()
+      if (dialog.value) {
         dialog.value.showModal();
-      } else {
-        closeClickHandler();
       }
+    } else {
+      closeClickHandler();
     }
-  );
+  }
+);
 
 const closeClickHandler = () => {
   dialog.value.close();
   emit("close");
 };
-const showClickHandler = (event) => {
+const showClickHandler = (event: any) => {
+  console.log(event);
   dialog.value.showModal();
 };
 

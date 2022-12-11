@@ -40,9 +40,19 @@ import "leaflet/dist/leaflet.css";
 import { IFeatureCollection } from "~~/api/feature";
 // import L from "leaflet";
 const config = useRuntimeConfig();
+const route = useRoute();
 
 let map = ref<any>(null);
 const store = useMyStore();
+
+if (route.query.coords && typeof route.query.coords === "string") {
+  console.log(route.query);
+  const coords = route.query.coords;
+  const newCoords = coords?.split(",").map((c: string) => parseFloat(c.trim()));
+  store.setCenter([newCoords[0], newCoords[1]]);
+  store.setZoomlvl(13);
+}
+
 // dont destructor
 const { center } = storeToRefs(store);
 const filterPanelOpen = useState<boolean>("map.filterPanelOpen", () => false);
@@ -127,6 +137,17 @@ const renderMap = async () => {
     Cities: cities,
   };
 
+  watch(
+    () => store.zoomlvl,
+    (newValue: number) => {
+      console.log(newValue);
+      if (newValue) {
+        // dialog.showModal()
+        map.value.setZoom(newValue);
+      }
+    }
+  );
+
   map.value = L.map("mapid", {
     center: store.getCenter as any,
     zoom: 6,
@@ -205,8 +226,9 @@ const props = defineProps({
 });
 
 onMounted(() => {
-  // console.log(LMap);
   renderMap();
+
+  map.value.setZoom(store.zoomlvl);
 });
 
 const openFilterPanel = () => {

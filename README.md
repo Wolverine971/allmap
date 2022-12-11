@@ -3,6 +3,11 @@
 ## Inspiration
 I want to be able to search for and plot on a map that I can refer to later
 
+- Paul English interview "meet in the middle" https://youtu.be/UUZE7eK2dho?t=1816
+- middle.net
+
+- Rando idea for geneate qr code for locations, Right QR code
+
 ### ToDo
 
 

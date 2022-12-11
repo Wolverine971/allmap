@@ -9,30 +9,38 @@
           @click="selected"
         />
         {{ panel.title || panel.name }}
-        <span v-if="panel.children?.length && !showChildren">
+        <span
+          v-if="(panel.children?.length || panel.properties) && !showChildren"
+        >
           <IconMdi:chevronRight />
         </span>
-        <span v-else-if="panel.children?.length && showChildren">
+        <span
+          v-else-if="
+            (panel.children?.length || panel.properties) && showChildren
+          "
+        >
           <IconMdi:chevronDown />
         </span>
       </button>
     </div>
-    <div v-if="dropDown && panel.properties" class="info">
+    <div v-if="showChildren && panel.properties" class="info">
       <p v-for="(prop, i) in Object.keys(panel.properties)" :key="i" class="">
         {{ prop }}: {{ panel.properties[prop] }}
       </p>
     </div>
-    <div v-if="showChildren" class="panel-children">
-      <div v-for="(childPanel, i) in panel.children" :key="i">
-        <slot name="cfilterPanel">
-          <FilterPanel
-            :panel="childPanel"
-            :panelType="panel.type"
-            :withinId="CurrentGeoWithin.id"
-          />
-        </slot>
+    <template v-else>
+      <div v-if="showChildren" class="panel-children">
+        <div v-for="(childPanel, i) in panel.children" :key="i">
+          <slot name="cfilterPanel">
+            <FilterPanel
+              :panel="childPanel"
+              :panelType="panel.type"
+              :withinId="CurrentGeoWithin.id"
+            />
+          </slot>
+        </div>
       </div>
-    </div>
+    </template>
   </div>
 </template>
 
@@ -88,11 +96,13 @@ let checked = ref(false);
 const { center } = storeToRefs(store);
 onMounted(async () => {
   if (store.pathSelections.includes(props.withinId || "")) {
-    store.filterPanelSelections.forEach((selection: IFilterPanelSelection) => {
-      if (selection.selection === props.panel.name) {
-        checked.value = true;
+    store.filterPanelSelections.forEach(
+      (fpSelection: IFilterPanelSelection) => {
+        if (fpSelection.selection === props.panel.name) {
+          checked.value = true;
+        }
       }
-    });
+    );
   }
 });
 
@@ -119,6 +129,7 @@ const expandPanel = async () => {
       }
       let resp = await geosWithin(CurrentGeoWithin.value);
       if (resp.geos.leafNode) {
+        console.log(resp.geos.leafNode);
         props.panel.children = resp.geos.items.map((item: any) => {
           return { ...item, type: "selection" };
         });
@@ -128,12 +139,8 @@ const expandPanel = async () => {
         });
       }
     }
-    showChildren.value = !showChildren.value;
-
-    if (props.panel.type === "object") {
-      dropDown.value = !dropDown.value;
-    }
   }
+  showChildren.value = !showChildren.value;
 };
 
 const selected = async () => {
@@ -142,6 +149,7 @@ const selected = async () => {
     id: CurrentGeoWithin.value.id,
     geos: [],
     selection: props.panel.name,
+    code: props.panel.code,
   } as IFilterPanelSelection);
 };
 </script>
